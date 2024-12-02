@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppResolver } from './app.resolver';
 import { ProjectResolver } from './Project/project.resolver';
 import { ProjectModule } from './Project/project.module';
+import { BugModule } from './bug/bug.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { ProjectModule } from './Project/project.module';
       synchronize: true,
     }),
     ProjectModule,
+    BugModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [AppResolver, ProjectResolver],

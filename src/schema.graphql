@@ -8,16 +8,29 @@ type Project {
   description: String!
 }
 
+type Bug {
+  id: Int!
+  title: String!
+  description: String!
+  status: String!
+  projectId: Int!
+}
+
 type Query {
   index: String!
   projects: [Project!]!
   projectById(projectId: Int!): Project!
+  bugs: [Bug!]!
+  bugById(bugId: Int!): Bug!
 }
 
 type Mutation {
   deleteProject(projectId: Int!): String!
   addProject(addProjectArgs: AddProjectArgs!): String!
   updateProject(updateProjectArgs: UpdateProjectArgs!): String!
+  deleteBug(bugId: Int!): String!
+  addBug(addBugArgs: AddBugArgs!): String!
+  updateBug(updateBugArgs: UpdateBugArgs!): String!
 }
 
 input AddProjectArgs {
@@ -31,4 +44,19 @@ input UpdateProjectArgs {
   name: String!
   description: String!
   status: String!
+}
+
+input AddBugArgs {
+  title: String!
+  description: String!
+  status: String!
+  projectId: Float!
+}
+
+input UpdateBugArgs {
+  id: Int!
+  title: String!
+  description: String!
+  status: String!
+  projectId: Float!
 }
