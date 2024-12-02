@@ -16,8 +16,21 @@ type Bug {
   projectId: Int!
 }
 
+type UserOutput {
+  id: Float!
+  firstName: String!
+  lastName: String!
+  email: String!
+  role: String!
+}
+
 type Query {
   index: String!
+  securedResource: String!
+  securedDataForManager: String!
+  securedDataForDeveloper: String!
+  securedDataForQA: String!
+  login(email: String!, password: String!): String!
   projects: [Project!]!
   projectById(projectId: Int!): Project!
   bugs: [Bug!]!
@@ -31,6 +44,7 @@ type Mutation {
   deleteBug(bugId: Int!): String!
   addBug(addBugArgs: AddBugArgs!): String!
   updateBug(updateBugArgs: UpdateBugArgs!): String!
+  createUser(firstName: String!, lastName: String!, email: String!, password: String!, role: String!): UserOutput!
 }
 
 input AddProjectArgs {

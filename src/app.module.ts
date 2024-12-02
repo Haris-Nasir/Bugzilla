@@ -8,6 +8,8 @@ import { ProjectResolver } from './Project/project.resolver';
 import { ProjectModule } from './Project/project.module';
 import { BugModule } from './bug/bug.module';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { AuthModule } from './auth/auth.module';
     ProjectModule,
     BugModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [],
   providers: [AppResolver, ProjectResolver],

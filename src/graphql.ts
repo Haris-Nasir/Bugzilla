@@ -50,8 +50,21 @@ export interface Bug {
     projectId: number;
 }
 
+export interface UserOutput {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+}
+
 export interface IQuery {
     index(): string | Promise<string>;
+    securedResource(): string | Promise<string>;
+    securedDataForManager(): string | Promise<string>;
+    securedDataForDeveloper(): string | Promise<string>;
+    securedDataForQA(): string | Promise<string>;
+    login(email: string, password: string): string | Promise<string>;
     projects(): Project[] | Promise<Project[]>;
     projectById(projectId: number): Project | Promise<Project>;
     bugs(): Bug[] | Promise<Bug[]>;
@@ -65,6 +78,7 @@ export interface IMutation {
     deleteBug(bugId: number): string | Promise<string>;
     addBug(addBugArgs: AddBugArgs): string | Promise<string>;
     updateBug(updateBugArgs: UpdateBugArgs): string | Promise<string>;
+    createUser(firstName: string, lastName: string, email: string, password: string, role: string): UserOutput | Promise<UserOutput>;
 }
 
 type Nullable<T> = T | null;
