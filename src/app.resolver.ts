@@ -16,7 +16,7 @@ export class AppResolver {
   @Query(() => String)
   @UseGuards(JwtGuard)
   securedResource(@Context('user') user: any): string {
-    return `This is secured data for ${user.role}: ${JSON.stringify(user)}`;
+    return JSON.stringify(user);
   }
 
   @Query(() => String)
