@@ -1,6 +1,6 @@
-import { UseGuards } from '@nestjs/common';
+import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Args, Context, Query, Resolver } from '@nestjs/graphql';
-import { JwtGuard } from './auth/jwt.guard';
+import { JwtGuard, tokenBlacklis } from './auth/jwt.guard';
 import { RoleGuard, Roles } from './auth/role.guard';
 import * as jwt from 'jsonwebtoken';
 import { AuthGuard } from './auth/auth.guard';
@@ -16,7 +16,7 @@ export class AppResolver {
   @Query(() => String)
   @UseGuards(JwtGuard)
   securedResource(@Context('user') user: any): string {
-    return `This is secured data for ${user.role}: ${JSON.stringify(user)}`;
+    return JSON.stringify(user);
   }
 
   @Query(() => String)
@@ -50,5 +50,24 @@ export class AppResolver {
       role: user.role,
     };
     return jwt.sign(payload, 'key', { expiresIn: '30m' });
+  }
+  @Query(() => String)
+  @UseGuards(JwtGuard) // Ensure the user is authenticated
+  logout(@Context('req') req): string {
+    const authorizationHeader = req.headers.authorization;
+
+    if (authorizationHeader) {
+      const token = authorizationHeader.split(' ')[1];
+
+      // Add the token to the blacklist
+      tokenBlacklis.add(token);
+
+      return 'Logged out successfully';
+    } else {
+      throw new HttpException(
+        'Authorization header missing',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -65,6 +65,7 @@ export interface IQuery {
     securedDataForDeveloper(): string | Promise<string>;
     securedDataForQA(): string | Promise<string>;
     login(email: string, password: string): string | Promise<string>;
+    logout(): string | Promise<string>;
     projects(): Project[] | Promise<Project[]>;
     projectById(projectId: number): Project | Promise<Project>;
     bugs(): Bug[] | Promise<Bug[]>;

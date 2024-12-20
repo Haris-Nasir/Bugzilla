@@ -31,6 +31,7 @@ type Query {
   securedDataForDeveloper: String!
   securedDataForQA: String!
   login(email: String!, password: String!): String!
+  logout: String!
   projects: [Project!]!
   projectById(projectId: Int!): Project!
   bugs: [Bug!]!
