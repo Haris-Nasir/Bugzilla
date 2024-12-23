@@ -3,11 +3,11 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 
-@Injectable()
+@Injectable() //Marks the class UserService as injectable.
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>, // Injecting the repository for User entity
+    private readonly userRepo: Repository<User>, // Injects the typeorm repository for the user entity to interact with the databse
   ) {}
 
   /**
@@ -16,13 +16,13 @@ export class UserService {
    * @returns Newly created user
    */
   async createUser(data: {
-    firstName: string; // First name of the user
-    lastName: string; // Last name of the user
-    email: string; // Email of the user
-    password: string; // Password of the user
-    role: string; // Role of the user
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    role: string;
   }): Promise<User> {
-    // Check if a user with the same email already exists in the database
+    // Check either the user exists on the basis of email
     const existingUser = await this.userRepo.findOne({
       where: { email: data.email },
     });
@@ -39,7 +39,6 @@ export class UserService {
       // Save the new user to the database and return the saved user
       return await this.userRepo.save(newUser);
     } catch (error) {
-      // Log the error if the saving process fails
       console.error('Error saving new user:', error);
 
       // Throw an internal server error
@@ -60,7 +59,6 @@ export class UserService {
       // Query the database to find the user by email
       return await this.userRepo.findOne({ where: { email } });
     } catch (error) {
-      // Log the error if querying the database fails
       console.error('Error while querying user by email:', error);
 
       // Throw an internal server error if the query fails
@@ -71,3 +69,4 @@ export class UserService {
     }
   }
 }
+//Service directly interact with the database and contains the core business logic

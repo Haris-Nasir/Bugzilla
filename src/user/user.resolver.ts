@@ -3,28 +3,28 @@ import { UserService } from './user.service';
 import { User } from './entity/user.entity';
 import { UserOutput } from './schema/createuser.schema';
 
-@Resolver(() => User)
+@Resolver(() => User) //Define class as graphql resolver for type User to handle graphql operations on User fields.
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {} //Injects the userservice into the resolver for business logic execution.
 
   /**
    * Mutation to create a new user
-   * @param firstName First name of the user
-   * @param lastName Last name of the user
-   * @param email Email of the user
-   * @param password Password of the user
-   * @param role Role of the user (e.g., admin, user)
-   * @returns Newly created user output object
+   * @param firstName
+   * @param lastName
+   * @param email
+   * @param password
+   * @param role Role should be either (Developer,manager or qa)
+   * @returns
    */
-  @Mutation(() => UserOutput)
+  @Mutation(() => UserOutput) //Defines a graphql mutation that returns a useroutput type.
   async createUser(
-    @Args('firstName') firstName: string, // first name of the user
-    @Args('lastName') lastName: string, // last name of the user
-    @Args('email') email: string, // email of the user
-    @Args('password') password: string, // password of the user
-    @Args('role') role: string, // user role (e.g., 'admin', 'user')
+    @Args('firstName') firstName: string, //Binds the mutation arguments to the method parameter.
+    @Args('lastName') lastName: string,
+    @Args('email') email: string,
+    @Args('password') password: string,
+    @Args('role') role: string,
   ): Promise<UserOutput> {
-    // Directly passing the data from the mutation to the service to create the user
+    //Calls the create user servicemethod to create a new user with the provided data.
     const user = await this.userService.createUser({
       firstName,
       lastName,
@@ -32,6 +32,7 @@ export class UserResolver {
       password,
       role,
     });
-    return user; // Return the newly created user object
+    return user; // Return the newly created user object as a UserOutput.
   }
 }
+//Deals with the graphql-specific (handling queries, mutations and subscription)
