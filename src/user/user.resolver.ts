@@ -2,6 +2,7 @@ import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entity/user.entity';
 import { UserOutput } from './schema/createuser.schema';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @Resolver(() => User) //Define class as graphql resolver for type User to handle graphql operations on User fields.
 export class UserResolver {
@@ -25,14 +26,17 @@ export class UserResolver {
     @Args('role') role: string,
   ): Promise<UserOutput> {
     //Calls the create user servicemethod to create a new user with the provided data.
-    const user = await this.userService.createUser({
-      firstName,
-      lastName,
-      email,
-      password,
-      role,
-    });
-    return user; // Return the newly created user object as a UserOutput.
+    try {
+      return await this.userService.createUser({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }
 //Deals with the graphql-specific (handling queries, mutations and subscription)

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { Args, Context, Query, Resolver } from '@nestjs/graphql';
-import { JwtGuard, tokenBlacklis } from './auth/jwt.guard';
+import { JwtGuard, tokenBlacklist } from './auth/jwt.guard';
 import { RoleGuard, Roles } from './auth/role.guard';
 import * as jwt from 'jsonwebtoken';
 import { AuthGuard } from './auth/auth.guard';
@@ -60,7 +60,7 @@ export class AppResolver {
       const token = authorizationHeader.split(' ')[1];
 
       // Add the token to the blacklist
-      tokenBlacklis.add(token);
+      tokenBlacklist.add(token);
 
       return 'Logged out successfully';
     } else {

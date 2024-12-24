@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @ObjectType() // Defines the class as graphql object for schema generation.
-@Entity('app___users') //Defines the class as a typeorm entity to generate table in db.
+@Entity('app_users') //Defines the class as a typeorm entity to generate table in db.
 export class User {
   @PrimaryGeneratedColumn() //Indicates a primary key coloumn for auto-generated value.
   id: number;
@@ -15,7 +15,7 @@ export class User {
   lastName: string;
 
   @Field(() => String)
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Field(() => String)
@@ -23,6 +23,6 @@ export class User {
   password: string;
 
   @Field(() => String)
-  @Column()
+  @Column({ type: 'enum', enum: ['manager', 'developer', 'qa'] })
   role: string;
 }

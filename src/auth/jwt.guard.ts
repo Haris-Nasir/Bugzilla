@@ -9,7 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { User } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
 import * as jwt from 'jsonwebtoken';
-const tokenBlacklis = new Set<string>(); //Token blacklisted
+const tokenBlacklist = new Set<string>(); //Token blacklisted
 @Injectable()
 export class JwtGuard implements CanActivate {
   // We will get graphql email and password variables through context, for this we will make gql execution context
@@ -21,7 +21,7 @@ export class JwtGuard implements CanActivate {
       const token = authorizationHeader.split(' ')[1];
 
       // Check if the token is blacklisted
-      if (tokenBlacklis.has(token)) {
+      if (tokenBlacklist.has(token)) {
         throw new HttpException(
           'Token has been invalidated',
           HttpStatus.UNAUTHORIZED,
@@ -46,4 +46,4 @@ export class JwtGuard implements CanActivate {
     }
   }
 }
-export { tokenBlacklis };
+export { tokenBlacklist };

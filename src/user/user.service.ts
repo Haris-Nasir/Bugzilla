@@ -2,7 +2,10 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-
+import * as bcrypt from 'bcrypt';
+const VALID_ROLES = ['developer', 'manager', 'qa'];
+const passwordPattern =
+  /(?=.*[0-9])(?=.*[A-Za-z])(?=.*[!@#$%^&*()_+{}":;,.<>?]).{6,}/;
 @Injectable() //Marks the class UserService as injectable.
 export class UserService {
   constructor(
@@ -22,6 +25,19 @@ export class UserService {
     password: string;
     role: string;
   }): Promise<User> {
+    // Validating roles
+    if (!VALID_ROLES.includes(data.role)) {
+      throw new HttpException(
+        `Invalid role provided. Allowed roles are: ${VALID_ROLES.join(', ')} `,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (!passwordPattern.test(data.password)) {
+      throw new HttpException(
+        'Password must include at least one letter, one number, and one special character',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     // Check either the user exists on the basis of email
     const existingUser = await this.userRepo.findOne({
       where: { email: data.email },
@@ -33,7 +49,8 @@ export class UserService {
     }
 
     // Create a new user entity using the provided data
-    const newUser = this.userRepo.create(data);
+    const hashedpassword = await bcrypt.hash(data.password, 10);
+    const newUser = this.userRepo.create({ ...data, password: hashedpassword });
 
     try {
       // Save the new user to the database and return the saved user
