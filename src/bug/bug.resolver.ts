@@ -1,35 +1,34 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Bug } from './schema/bug.schema';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { BugService } from './bug.service';
-import { AddBugArgs } from './args/addbug';
-import { UpdateBugArgs } from './args/updatebug';
+import { Bug } from './entity/bug.entity';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard';
+import { JwtGuard } from '../auth/jwt.guard';
+import { CreateBugDto } from './dto/create-bug.dto';
+import { UpdateBugDto } from './dto/update-bug.dto';
 
-@Resolver((of) => Bug)
+@Resolver(() => Bug)
 export class BugResolver {
   constructor(private readonly bugService: BugService) {}
 
-  @Query((returns) => [Bug], { name: 'bugs' })
-  getAllBugs() {
-    return this.bugService.findAllBugs();
+  @UseGuards(AuthGuard, JwtGuard)
+  @Query(() => [Bug])
+  async getBugs() {
+    return this.bugService.findAll();
   }
 
-  @Query((returns) => Bug, { name: 'bugById' })
-  getBugById(@Args({ name: 'bugId', type: () => Int }) id: number) {
-    return this.bugService.findBugById(id);
+  @UseGuards(AuthGuard, JwtGuard)
+  @Mutation(() => Bug)
+  async createBug(@Args('createBugDto') createBugDto: CreateBugDto) {
+    return this.bugService.create(createBugDto);
   }
 
-  @Mutation((returns) => String, { name: 'deleteBug' })
-  deleteBugById(@Args({ name: 'bugId', type: () => Int }) id: number) {
-    return this.bugService.deleteBug(id);
-  }
-
-  @Mutation((returns) => String, { name: 'addBug' })
-  addBug(@Args('addBugArgs') addBugArgs: AddBugArgs) {
-    return this.bugService.addBug(addBugArgs);
-  }
-
-  @Mutation((returns) => String, { name: 'updateBug' })
-  updateBug(@Args('updateBugArgs') updateBugArgs: UpdateBugArgs) {
-    return this.bugService.updateBug(updateBugArgs);
+  @UseGuards(AuthGuard, JwtGuard)
+  @Mutation(() => Bug)
+  async updateBug(
+    @Args('id') id: string,
+    @Args('updateBugDto') updateBugDto: UpdateBugDto,
+  ) {
+    return this.bugService.update(id, updateBugDto);
   }
 }

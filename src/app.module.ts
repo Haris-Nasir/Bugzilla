@@ -10,6 +10,7 @@ import { BugModule } from './bug/bug.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { UserService } from './user/user.service';
     BugModule,
     AuthModule,
     UserModule,
+    JwtModule,
   ],
   controllers: [],
   providers: [AppResolver, ProjectResolver],

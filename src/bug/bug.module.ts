@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { BugEntity } from './entity/bug.entity';
-import { BugService } from './bug.service';
 import { BugResolver } from './bug.resolver';
+import { BugService } from './bug.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Bug } from './entity/bug.entity';
+import { ProjectModule } from '../project/project.module';
+import { UserModule } from '../user/user.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BugEntity])],
-  controllers: [],
-  providers: [BugService, BugResolver],
+  imports: [
+    TypeOrmModule.forFeature([Bug]),
+    ProjectModule,
+    UserModule,
+    JwtModule,
+  ],
+  providers: [BugResolver, BugService],
   exports: [BugService],
 })
 export class BugModule {}

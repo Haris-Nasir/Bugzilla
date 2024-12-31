@@ -1,28 +1,41 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-@ObjectType() // Defines the class as graphql object for schema generation.
-@Entity('app_users') //Defines the class as a typeorm entity to generate table in db.
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
+import { Project } from '../../project/entity/project.entity';
+import { Bug } from '../../bug/entity/bug.entity';
+import { ObjectType } from '@nestjs/graphql';
+
+@Entity()
+@ObjectType()
 export class User {
-  @PrimaryGeneratedColumn() //Indicates a primary key coloumn for auto-generated value.
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Field(() => String) //It exposes the first name property as a stringtype field in graphql-schema
-  @Column() //It maps the propert to a database coloumn managed by typeorm.
-  firstName: string;
-
-  @Field(() => String)
   @Column()
-  lastName: string;
+  name: string;
 
-  @Field(() => String)
   @Column({ unique: true })
   email: string;
 
-  @Field(() => String)
   @Column()
   password: string;
 
-  @Field(() => String)
-  @Column({ type: 'enum', enum: ['manager', 'developer', 'qa'] })
-  role: string;
+  @Column()
+  userType: string; // 'manager', 'developer', 'qa'
+
+  @ManyToMany(() => Project, (project) => project.users)
+  projects: Project[];
+
+  @OneToMany(() => Project, (project) => project.manager)
+  managedProjects: Project[];
+
+  @OneToMany(() => Bug, (bug) => bug.creator)
+  bugs: Bug[];
+
+  @OneToMany(() => Bug, (bug) => bug.developer)
+  assignedBugs: Bug[];
 }

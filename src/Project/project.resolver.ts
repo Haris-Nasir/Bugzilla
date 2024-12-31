@@ -1,32 +1,36 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Project } from './schema/project.schema';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ProjectService } from './project.service';
-import { AddProjectArgs } from './args/addpoject';
-import { UpdateProjectArgs } from './args/updateproject';
+import { Project } from './entity/project.entity';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard';
+import { JwtGuard } from '../auth/jwt.guard';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { UpdateProjectDto } from './dto/updateproject.dto';
 
-@Resolver((of) => Project)
+@Resolver(() => Project)
 export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
-  @Query((returns) => [Project], { name: 'projects' })
-  getAllProjects() {
-    return this.projectService.findAllProjects();
+
+  @UseGuards(AuthGuard, JwtGuard)
+  @Query(() => [Project])
+  async getProjects() {
+    return this.projectService.findAll();
   }
-  @Query((returns) => Project, { name: 'projectById' })
-  getProjectById(@Args({ name: 'projectId', type: () => Int }) id: number) {
-    return this.projectService.findProjectById(id);
-  }
-  @Mutation((returns) => String, { name: 'deleteProject' })
-  deleteProjectById(@Args({ name: 'projectId', type: () => Int }) id: number) {
-    return this.projectService.deleteProject(id);
-  }
-  @Mutation((returns) => String, { name: 'addProject' })
-  addProject(@Args('addProjectArgs') addProjectArgs: AddProjectArgs) {
-    return this.projectService.addProject(addProjectArgs);
-  }
-  @Mutation((returns) => String, { name: 'updateProject' })
-  updateProject(
-    @Args('updateProjectArgs') updateProjectArgs: UpdateProjectArgs,
+
+  @UseGuards(AuthGuard, JwtGuard)
+  @Mutation(() => Project)
+  async createProject(
+    @Args('createProjectDto') createProjectDto: CreateProjectDto,
   ) {
-    return this.projectService.updateProject(updateProjectArgs);
+    return this.projectService.create(createProjectDto);
+  }
+
+  @UseGuards(AuthGuard, JwtGuard)
+  @Mutation(() => Project)
+  async updateProject(
+    @Args('id') id: string,
+    @Args('updateProjectDto') updateProjectDto: UpdateProjectDto,
+  ) {
+    return this.projectService.update(id, updateProjectDto);
   }
 }

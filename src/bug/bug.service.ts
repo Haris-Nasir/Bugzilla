@@ -1,54 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { BugEntity } from './entity/bug.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AddBugArgs } from './args/addbug';
-import { UpdateBugArgs } from './args/updatebug';
+import { Repository } from 'typeorm';
+import { Bug } from './entity/bug.entity';
+import { CreateBugDto } from './dto/create-bug.dto';
+import { UpdateBugDto } from './dto/update-bug.dto';
 
-@Injectable() // As we create this injectable decorator, we will provide this into our project provider
+@Injectable()
 export class BugService {
   constructor(
-    @InjectRepository(BugEntity)
-    public readonly bugRepo: Repository<BugEntity>,
+    @InjectRepository(Bug)
+    private readonly bugRepository: Repository<Bug>,
   ) {}
 
-  async findAllBugs(): Promise<BugEntity[]> {
-    let bugs = await this.bugRepo.find();
-    return bugs;
+  async findAll(): Promise<Bug[]> {
+    return this.bugRepository.find({ relations: ['creator', 'project'] });
   }
 
-  async findBugById(id: number): Promise<BugEntity> {
-    let bug = await this.bugRepo.findOne({ where: { id: id } });
-    return bug;
+  async create(createBugDto: CreateBugDto): Promise<Bug> {
+    const bug = this.bugRepository.create(createBugDto);
+    return this.bugRepository.save(bug);
   }
 
-  async deleteBug(id: number): Promise<string> {
-    await this.bugRepo.delete(id);
-    return 'Bug has been deleted';
-  }
-
-  async addBug(addBugArgs: AddBugArgs): Promise<string> {
-    let bug: BugEntity = new BugEntity();
-    bug.title = addBugArgs.title;
-    bug.description = addBugArgs.description;
-    bug.status = addBugArgs.status;
-    bug.projectId = addBugArgs.projectId; // Linking the bug to the project
-
-    await this.bugRepo.save(bug);
-    return 'Bug has been successfully added';
-  }
-
-  async updateBug(updateBugArgs: UpdateBugArgs): Promise<string> {
-    let bug: BugEntity = await this.bugRepo.findOne({
-      where: { id: updateBugArgs.id },
+  async update(id: string, updateBugDto: UpdateBugDto): Promise<Bug> {
+    await this.bugRepository.update(id, updateBugDto);
+    return this.bugRepository.findOne({
+      where: { id },
+      relations: ['creator', 'project'],
     });
-
-    bug.title = updateBugArgs.title;
-    bug.description = updateBugArgs.description;
-    bug.status = updateBugArgs.status;
-    bug.projectId = updateBugArgs.projectId; // Linking the bug to the project
-
-    await this.bugRepo.save(bug);
-    return 'Bug has been successfully updated';
   }
 }

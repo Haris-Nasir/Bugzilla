@@ -1,42 +1,28 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entity/user.entity';
-import { UserOutput } from './schema/createuser.schema';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
-@Resolver(() => User) //Define class as graphql resolver for type User to handle graphql operations on User fields.
+@Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {} //Injects the userservice into the resolver for business logic execution.
+  constructor(private readonly userService: UserService) {}
 
-  /**
-   * Mutation to create a new user
-   * @param firstName
-   * @param lastName
-   * @param email
-   * @param password
-   * @param role Role should be either (Developer,manager or qa)
-   * @returns
-   */
-  @Mutation(() => UserOutput) //Defines a graphql mutation that returns a useroutput type.
-  async createUser(
-    @Args('firstName') firstName: string, //Binds the mutation arguments to the method parameter.
-    @Args('lastName') lastName: string,
-    @Args('email') email: string,
-    @Args('password') password: string,
-    @Args('role') role: string,
-  ): Promise<UserOutput> {
-    //Calls the create user servicemethod to create a new user with the provided data.
-    try {
-      return await this.userService.createUser({
-        firstName,
-        lastName,
-        email,
-        password,
-        role,
-      });
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+  @Query(() => [User])
+  async getUsers() {
+    return this.userService.findAll();
+  }
+
+  @Mutation(() => User)
+  async createUser(@Args('createUserDto') createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
+
+  @Mutation(() => User)
+  async updateUser(
+    @Args('id') id: string,
+    @Args('updateUserDto') updateUserDto: UpdateUserDto,
+  ) {
+    return this.userService.update(id, updateUserDto);
   }
 }
-//Deals with the graphql-specific (handling queries, mutations and subscription)

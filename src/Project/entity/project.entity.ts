@@ -1,15 +1,35 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-//This entity will map into our database and graphql will read this deocrator to create schema and type definations
-@Entity({ name: 'Project' }) //Entity decorator
-export class ProjectEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+} from 'typeorm';
+import { User } from '../../user/entity/user.entity';
+import { Bug } from '../../bug/entity/bug.entity';
+import { ObjectType } from '@nestjs/graphql';
+
+@Entity()
+@ObjectType()
+export class Project {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column()
   name: string;
-  @Column()
+
+  @Column({ nullable: true })
   description: string;
 
-  @Column({ default: 'active' })
-  status: string; //status of project can be active or completed.
+  @ManyToOne(() => User, (user) => user.managedProjects)
+  manager: User;
+
+  @ManyToMany(() => User, (user) => user.projects)
+  @JoinTable()
+  users: User[];
+
+  @OneToMany(() => Bug, (bug) => bug.project)
+  bugs: Bug[];
 }
-//Now based on this entity, we will get repository of this entity through typeorm-module and we will inject that repository into our project service layer

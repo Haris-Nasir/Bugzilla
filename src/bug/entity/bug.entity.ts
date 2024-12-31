@@ -1,20 +1,45 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Unique,
+} from 'typeorm';
+import { User } from '../../user/entity/user.entity';
+import { Project } from '../../project/entity/project.entity';
+import { ObjectType } from '@nestjs/graphql';
 
-// This entity will map into our database and GraphQL will read this decorator to create schema and type definitions.
-@Entity({ name: 'Bug' }) // Entity decorator
-export class BugEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+@Entity()
+@ObjectType()
+@Unique(['title', 'project'])
+export class Bug {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
-  status: string; // status of the bug (e.g., 'open', 'closed')
+  @Column({ nullable: true })
+  deadline: Date;
+
+  @Column({ nullable: true })
+  screenshot: string;
 
   @Column()
-  projectId: number; // Link to the Project entity
+  type: string; // 'feature' or 'bug'
+
+  @Column()
+  status: string; // 'new', 'started', 'completed' (for features), 'resolved' (for bugs)
+
+  @ManyToOne(() => User, (user) => user.bugs)
+  creator: User;
+
+  @ManyToOne(() => User, (user) => user.assignedBugs, { nullable: true })
+  developer: User;
+
+  @ManyToOne(() => Project, (project) => project.bugs)
+  project: Project;
 }

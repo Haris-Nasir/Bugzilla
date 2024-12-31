@@ -5,6 +5,7 @@ import { RoleGuard, Roles } from './auth/role.guard';
 import * as jwt from 'jsonwebtoken';
 import { AuthGuard } from './auth/auth.guard';
 import { User } from './user/entity/user.entity';
+// src/app.resolver.ts
 
 @Resolver()
 export class AppResolver {
@@ -47,7 +48,7 @@ export class AppResolver {
     let payload = {
       id: user.id,
       email: user.email,
-      role: user.role,
+      // role: user.role,
     };
     return jwt.sign(payload, 'key', { expiresIn: '30m' });
   }
@@ -60,7 +61,7 @@ export class AppResolver {
       const token = authorizationHeader.split(' ')[1];
 
       // Add the token to the blacklist
-      tokenBlacklist.add(token);
+      // tokenBlacklist.add(token);
 
       return 'Logged out successfully';
     } else {
