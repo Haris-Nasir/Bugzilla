@@ -5,11 +5,11 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { Project } from '../../project/entity/project.entity';
 import { Bug } from '../../bug/entity/bug.entity';
 import { ObjectType } from '@nestjs/graphql';
+import { ProjectEntity } from 'src/project/entity/project.entity';
 
-@Entity()
+@Entity('users')
 @ObjectType()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -27,11 +27,11 @@ export class User {
   @Column()
   userType: string; // 'manager', 'developer', 'qa'
 
-  @ManyToMany(() => Project, (project) => project.users)
-  projects: Project[];
+  @ManyToMany(() => ProjectEntity, (project) => project.users)
+  projects: ProjectEntity[];
 
-  @OneToMany(() => Project, (project) => project.manager)
-  managedProjects: Project[];
+  @OneToMany(() => ProjectEntity, (project) => project.manager)
+  managedProjects: ProjectEntity[];
 
   @OneToMany(() => Bug, (bug) => bug.creator)
   bugs: Bug[];

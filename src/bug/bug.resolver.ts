@@ -6,6 +6,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CreateBugDto } from './dto/create-bug.dto';
 import { UpdateBugDto } from './dto/update-bug.dto';
+import { query } from 'express';
 
 @Resolver(() => Bug)
 export class BugResolver {
@@ -23,6 +24,11 @@ export class BugResolver {
     return this.bugService.create(createBugDto);
   }
 
+  @UseGuards(AuthGuard, JwtGuard)
+  @Query(() => [Bug])
+  async deleteBug() {
+    return this.bugService.delete();
+  }
   @UseGuards(AuthGuard, JwtGuard)
   @Mutation(() => Bug)
   async updateBug(

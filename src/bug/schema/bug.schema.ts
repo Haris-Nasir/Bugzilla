@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Bug {
+export class BugSchema {
   @Field((type) => Int)
   id: number;
 
@@ -16,4 +16,6 @@ export class Bug {
 
   @Field((type) => Int)
   projectId: number; // Linking to the project ID
+  @Field((type) => String)
+  name: String;
 }

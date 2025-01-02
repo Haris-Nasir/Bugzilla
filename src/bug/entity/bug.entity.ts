@@ -6,10 +6,10 @@ import {
   Unique,
 } from 'typeorm';
 import { User } from '../../user/entity/user.entity';
-import { Project } from '../../project/entity/project.entity';
 import { ObjectType } from '@nestjs/graphql';
+import { ProjectEntity } from 'src/project/entity/project.entity';
 
-@Entity()
+@Entity('bugs')
 @ObjectType()
 @Unique(['title', 'project'])
 export class Bug {
@@ -40,6 +40,6 @@ export class Bug {
   @ManyToOne(() => User, (user) => user.assignedBugs, { nullable: true })
   developer: User;
 
-  @ManyToOne(() => Project, (project) => project.bugs)
-  project: Project;
+  @ManyToOne(() => ProjectEntity, (project) => project.bugs)
+  project: ProjectEntity;
 }

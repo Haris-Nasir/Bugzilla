@@ -1,24 +1,24 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ProjectService } from './project.service';
-import { Project } from './entity/project.entity';
+import { ProjectEntity } from './entity/project.entity';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { JwtGuard } from '../auth/jwt.guard';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/updateproject.dto';
 
-@Resolver(() => Project)
+@Resolver(() => ProjectEntity)
 export class ProjectResolver {
   constructor(private readonly projectService: ProjectService) {}
 
   @UseGuards(AuthGuard, JwtGuard)
-  @Query(() => [Project])
+  @Query(() => [ProjectEntity])
   async getProjects() {
     return this.projectService.findAll();
   }
 
   @UseGuards(AuthGuard, JwtGuard)
-  @Mutation(() => Project)
+  @Mutation(() => ProjectEntity)
   async createProject(
     @Args('createProjectDto') createProjectDto: CreateProjectDto,
   ) {
@@ -26,7 +26,7 @@ export class ProjectResolver {
   }
 
   @UseGuards(AuthGuard, JwtGuard)
-  @Mutation(() => Project)
+  @Mutation(() => ProjectEntity)
   async updateProject(
     @Args('id') id: string,
     @Args('updateProjectDto') updateProjectDto: UpdateProjectDto,

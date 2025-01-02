@@ -11,9 +11,9 @@ import { User } from '../../user/entity/user.entity';
 import { Bug } from '../../bug/entity/bug.entity';
 import { ObjectType } from '@nestjs/graphql';
 
-@Entity()
-@ObjectType()
-export class Project {
+@Entity('projects')
+@ObjectType('ProjectEntity')
+export class ProjectEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
